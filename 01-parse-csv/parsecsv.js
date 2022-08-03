@@ -11,3 +11,18 @@ spectrum(async (err, samples) => {
     console.log("PARSED:\n", parsed);
   }
 });
+
+// TODO: design notes
+// CASES to plan for
+
+// Case: comma_in_quotes
+// Case: empty
+// Case: empty_crlf
+// Case: escaped_quotes
+// Case: json
+// Case: newlines
+// Case: newlines_crlf
+// Case: quotes_and_newlines
+// Case: simple
+// Case: simple_crlf
+// Case: utf8
