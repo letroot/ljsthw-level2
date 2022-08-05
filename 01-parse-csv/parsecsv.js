@@ -1,7 +1,6 @@
 import spectrum from "csv-spectrum";
 import csv from "neat-csv";
 import fs from "fs";
-// import testObject from "./test.js";
 import equal from "deep-equal";
 
 const TEST_FILE = "./test.js";
@@ -51,17 +50,16 @@ spectrum(async (err, samples) => {
 
 const simpleParse = (raw_csv) => {
   let header = raw_csv.split(DELIMITERS.newline)[0];
-  let headerArray = raw_csv.split(DELIMITERS.newline)[0].split(",");
+  let headerArray = raw_csv
+    .split(DELIMITERS.newline)[0]
+    .split(",")
+    .map((h) => h.trim());
 
   let parsed = {};
-  let headers = headerArray.map((item) => item.trim());
 
   let csvBody = raw_csv.substr(header.length + 1, raw_csv.length);
   let parsedBody = parseCSVBody(csvBody, headerArray);
 
-  for (let title of headers) {
-    parsed;
-  }
   return parsedBody;
 };
 
@@ -94,8 +92,9 @@ function parseCSVBody(string, header) {
   result.push(text);
   result = result.map((arr) => arr.join(""));
 
-  let parsedBody = [], subArr;
-  parsedBody.push(header)
+  let parsedBody = [],
+    subArr;
+  parsedBody.push(header);
   while ((subArr = result.splice(0, header.length)).length)
     parsedBody.push(subArr);
 
