@@ -1,7 +1,10 @@
 import spectrum from "csv-spectrum";
 import csv from "neat-csv";
 import fs from "fs";
-const TEST_FILE = "./test.js"
+// import testObject from "./test.js";
+import equal from "deep-equal";
+
+const TEST_FILE = "./test.js";
 
 const writeTestFile = async (samples, path) => {
   let result = [];
@@ -9,14 +12,13 @@ const writeTestFile = async (samples, path) => {
   for (let sample of samples) {
     let row = {};
     row.name = sample.name;
-    
-    let csvString = sample.csv.toString()
+
+    let csvString = sample.csv.toString();
     let csvSplit = csvString.split("\n");
 
-    row.header = csvSplit[0];
-    row.data = csvSplit[1];
-    let correct = await csv(csvString)
-    row.correct = correct[0]
+    row.data = csvString;
+    let correct = await csv(csvString);
+    row.correct = correct;
 
     result.push(row);
   }
@@ -26,43 +28,38 @@ const writeTestFile = async (samples, path) => {
 };
 
 spectrum(async (err, samples) => {
-  // writeTestFile(samples, TEST_FILE)
+  // writeTestFile(samples, TEST_FILE);
 
   for (let sample of samples) {
     const raw_csv = sample.csv.toString();
-    console.log("RAW CSV:\n", raw_csv);
+    // console.log("RAW CSV:\n", raw_csv);
 
-    const parsed = await csv(raw_csv);
-    // const parsed = await simple_parse(raw_csv);
-    console.log("PARSED:\n", parsed);
+    const good = await csv(raw_csv);
+    const ours = simpleParse(raw_csv);
+    console.log(ours);
+
+    // if (!equal(ours, good)) {
+    //   console.error("FAIL EXPECTED", good, "\nGOT", ours);
+    //   process.exit(1);
+    // }
+    // // const parsed = await simple_parse(raw_csv);
+    // console.log("PARSED:\n", parsed);
   }
 });
 
-// TODO: design notes
-// CASES to plan for
+// const roughStuff = () => {
+//    console.log(testObject)
+//   let first = testObject[0];
 
-// Case: comma_in_quotes
-// Case: empty
-// Case: empty_crlf
-// Case: escaped_quotes
-// Case: json
-// Case: newlines
-// Case: newlines_crlf
-// Case: quotes_and_newlines
-// Case: simple
-// Case: simple_crlf
-// Case: utf8
-
-// const simple_parse = (raw_csv) => {
-//   const rows = raw_csv.split("\n");
-//   const header = rows[0];
-//   console.log("====", "Header:", header, "====");
-
-//   const result = [];
-
-//   for (let row of rows) {
-//     result.push(row.split(","));
-//   }
-
-//   return result;
 // };
+
+// roughStuff();
+
+const simpleParse = (raw_csv) => {
+  const DELIMITERS = { newline: "\n", carriage: "\r\n" };
+
+  let header = raw_csv.split(DELIMITERS.newline)[0].split(',');
+  let parsed = {};
+  header.map(item => parsed[item.trim()] = "");
+  return parsed;
+};
